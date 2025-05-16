@@ -159,28 +159,3 @@ make qemu-nox
 ```
 
 ---
-
-## ⚙️ Bagian 2: Penjadwalan Proses
-
-### 🔍 Konsep
-
-* Penjadwalan menentukan proses mana yang dijalankan.
-* **xv6 default** menggunakan *round-robin*.
-* Bisa dimodifikasi menjadi *priority-based* scheduler.
-
----
-
-### 🔎 Eksplorasi Kode Scheduler
-
-**File penting:** `proc.c`
-
-Fungsi scheduler:
-
-```c
-void scheduler(void)
-```
-
-* Menelusuri semua proses.
-* Menjadwalkan proses yang `RUNNABLE`.
-
----
