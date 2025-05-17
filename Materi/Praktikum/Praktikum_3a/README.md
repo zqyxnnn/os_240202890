@@ -1,6 +1,6 @@
-# 🧪 Tutorial Praktikum xv6
+# Praktikum Sistem Operasi menggunakan xv6
 
-## 🔧 Topik: Manajemen Proses, System Call, dan Penjadwalan Proses
+## 🔧 Topik: System Call, Manajemen Proses, dan Penjadwalan Proses
 
 ---
 
@@ -16,7 +16,7 @@
 
 Build Docker image:
 ```bash
-docker build -t xv6 .
+docker build -t xv6_nim .
 ```
 
 ---
@@ -26,12 +26,12 @@ docker build -t xv6 .
 Jalankan lingkungan praktikum di dalam Docker:
 
 ```bash
-docker run -it --rm xv6
+docker run -it --rm xv6_nim
 ```
 
 ---
 
-# ** 🧪 Bagian 2: System Call `helloworld`**
+# ** 🧪 Bagian 1: System Call `helloworld`**
 
 ## A. Tambahkan Nomor System Call
 
@@ -138,7 +138,7 @@ make qemu-nox
 
 ---
 
-# 📘 Bagian 2: Pengamatan Manajemen Proses di xv6
+# 🧪 Bagian 2: Pengamatan Manajemen Proses di xv6
 
 ## ✅ Langkah 1 – Tambahkan Log untuk Observasi Proses
 
@@ -322,7 +322,7 @@ int main() {
   if(pid == 0){
     // Child process
     printf(1, "[user] Child: my pid is %d\n", getpid());
-    char *argv[] = { "echo", "hello from child", 0 };
+    char *argv[] = { "echo", "hello [NIM_NAMA] from child", 0 };
     exec("echo", argv);
     printf(1, "[user] exec failed\n");
   } else {
