@@ -112,7 +112,7 @@ Modul ini memungkinkan Anda untuk menjelajahi area kernel selain manajemen prose
   2. Implementasikan *system call* `int chmod(char* path, int mode)` untuk mengubah bit perizinan pada sebuah file.
   3.  Pastikan *system call* seperti `open()`, `read()`, dan `write()` mematuhi perizinan ini.
 
-* #### ** Driver Perangkat I/O Semu** : Implementasikan sebuah *character device driver* untuk perangkat semu `/dev/random`.
+* #### **Driver Perangkat I/O Semu** : Implementasikan sebuah *character device driver* untuk perangkat semu `/dev/random`.
   1.  Daftarkan perangkat baru pada tabel `devsw` kernel.
   2.  Implementasikan fungsi *read* untuk perangkat ini. Saat dibaca, perangkat harus menghasilkan urutan angka *pseudo-acak*.
   3.  Buat program *user-level* yang dapat membaca dari `/dev/random` dan menampilkan hasilnya.
