@@ -15,6 +15,7 @@ Modul ini berfokus pada dua implementasi utama dalam sistem operasi xv6:
 • Melalui modul ini, mahasiswa belajar mengenai modifikasi kernel file system serta mekanisme kerja device driver pada sistem Unix-like minimalis seperti xv6.
 
 🛠️ Rincian Implementasi 
+
 ✏️ Bagian A: Implementasi System Call chmod (path, mode) Menambahkan field short mode pada struktur struct inode di fs.h untuk menandai mode file (0: read-write, 1: read-only). 
 • Menambahkan definisi system call baru chmod: 
 ○ syscall.h → #define SYS_chmod 27 
