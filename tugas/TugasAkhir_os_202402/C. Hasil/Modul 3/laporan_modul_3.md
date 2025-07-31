@@ -34,4 +34,5 @@ Lupa mengurangi ref_count pada saat halaman tidak lagi digunakan, menyebabkan me
 
 📚 Referensi 
 MIT xv6 Book (x86): https://pdos.csail.mit.edu/6.828/2018/xv6/book-rev11.pdf 
-Repositori xv6-public: https://github.com/mit-pdos/xv6-public Diskusi praktikum dan dokumentasi internal Stack Overflow dan forum diskusi kernel open source.
+Repositori xv6-public: https://github.com/mit-pdos/xv6-public 
+Diskusi praktikum dan dokumentasi internal Stack Overflow dan forum diskusi kernel open source.
