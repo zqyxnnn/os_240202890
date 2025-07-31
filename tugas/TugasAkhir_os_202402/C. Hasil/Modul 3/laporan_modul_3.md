@@ -1,97 +1,32 @@
-# 📝 Laporan Tugas Akhir
+📝 Laporan Tugas Akhir 
+Mata Kuliah: Sistem Operasi
+Semester: Genap / Tahun Ajaran 2024–2025
+Nama: Zakkya Fauzan Alba’asithu 
+NIM: 24202890
+Modul yang Dikerjakan:
+Modul 3 – Manajemen Memori Tingkat Lanjut (xv6-public x86)
 
-**Mata Kuliah**: Sistem Operasi
-**Semester**: Genap / Tahun Ajaran 2024–2025
-**Nama**: `<Nama Lengkap>`
-**NIM**: `<Nomor Induk Mahasiswa>`
-**Modul yang Dikerjakan**:
-`(Contoh: Modul 1 – System Call dan Instrumentasi Kernel)`
+📌 Deskripsi Singkat Tugas
+Mengimplementasikan dua fitur memori tingkat lanjut pada kernel xv6: Copy-on-Write Fork – Optimalisasi fungsi fork() agar lebih efisien dalam penggunaan memori melalui teknik copy-on-write. 
+Shared Memory ala System V – Menambahkan kemampuan antar proses untuk saling berbagi satu halaman memori menggunakan sistem shmget() dan shmrelease() dengan mekanisme reference counting. 
 
----
+🛠️ Rincian Implementasi Copy-on-Write Fork: Menambahkan array ref_count[] dan fungsi incref() / decref() pada vm.c untuk melacak penggunaan memori fisik. Menambahkan flag baru PTE_COW pada mmu.h sebagai penanda halaman COW. Mengganti fungsi copyuvm() menjadi cowuvm() yang hanya menyalin page table dengan flag COW, bukan isi halaman. Memodifikasi fork() di proc.c agar menggunakan cowuvm() alih-alih copyuvm(). Menangani page fault di trap.c untuk mendeteksi penulisan ke halaman COW dan membuat salinan fisik secara langsung. Shared Memory ala System V: Menambahkan struktur shmtab[] di vm.c untuk menyimpan key, frame, dan refcount. Menambahkan syscall baru shmget() dan shmrelease() pada sysproc.c untuk mengakses shared memory berdasarkan key. Mendaftarkan syscall baru di syscall.h, syscall.c, user.h, dan usys.S. ✅ Uji Fungsionalitas 
 
-## 📌 Deskripsi Singkat Tugas
+Program uji yang digunakan:
 
-Tuliskan deskripsi singkat dari modul yang Anda kerjakan. Misalnya:
+cowtest.c — menguji apakah fork() menggunakan Copy-on-Write, dan apakah halaman hanya disalin saat terjadi penulisan (write). shmtest.c — menguji apakah shared memory dapat diakses oleh proses parent dan child, dan data dapat terbagi secara konsisten. 📷 Hasil Uji 📍 Contoh Output cowtest: Child sees: Y Parent sees: X 
 
-* **Modul 1 – System Call dan Instrumentasi Kernel**:
-  Menambahkan dua system call baru, yaitu `getpinfo()` untuk melihat proses yang aktif dan `getReadCount()` untuk menghitung jumlah pemanggilan `read()` sejak boot.
----
+Hasil ini menunjukkan bahwa halaman hanya disalin ketika child menulis, bukan saat fork().
 
-## 🛠️ Rincian Implementasi
+📍 Contoh Output shmtest: Child reads: A Parent reads: B 
 
-Tuliskan secara ringkas namun jelas apa yang Anda lakukan:
+Hasil ini menunjukkan bahwa child berhasil membaca isi dari halaman shared memory yang ditulis parent, dan sebaliknya.
 
-### Contoh untuk Modul 1:
+⚠️ Kendala yang Dihadapi 
+Beberapa kali terjadi panic karena page fault tidak ditangani dengan benar (akses halaman tanpa PTE_P atau PTE_COW). 
+Salah alamat pemetaan shared memory menyebabkan proses membaca halaman yang salah. 
+Lupa mengurangi ref_count pada saat halaman tidak lagi digunakan, menyebabkan memory leak.
 
-* Menambahkan dua system call baru di file `sysproc.c` dan `syscall.c`
-* Mengedit `user.h`, `usys.S`, dan `syscall.h` untuk mendaftarkan syscall
-* Menambahkan struktur `struct pinfo` di `proc.h`
-* Menambahkan counter `readcount` di kernel
-* Membuat dua program uji: `ptest.c` dan `rtest.c`
----
-
-## ✅ Uji Fungsionalitas
-
-Tuliskan program uji apa saja yang Anda gunakan, misalnya:
-
-* `ptest`: untuk menguji `getpinfo()`
-* `rtest`: untuk menguji `getReadCount()`
-* `cowtest`: untuk menguji fork dengan Copy-on-Write
-* `shmtest`: untuk menguji `shmget()` dan `shmrelease()`
-* `chmodtest`: untuk memastikan file `read-only` tidak bisa ditulis
-* `audit`: untuk melihat isi log system call (jika dijalankan oleh PID 1)
-
----
-
-## 📷 Hasil Uji
-
-Lampirkan hasil uji berupa screenshot atau output terminal. Contoh:
-
-### 📍 Contoh Output `cowtest`:
-
-```
-Child sees: Y
-Parent sees: X
-```
-
-### 📍 Contoh Output `shmtest`:
-
-```
-Child reads: A
-Parent reads: B
-```
-
-### 📍 Contoh Output `chmodtest`:
-
-```
-Write blocked as expected
-```
-
-Jika ada screenshot:
-
-```
-![hasil cowtest](./screenshots/cowtest_output.png)
-```
-
----
-
-## ⚠️ Kendala yang Dihadapi
-
-Tuliskan kendala (jika ada), misalnya:
-
-* Salah implementasi `page fault` menyebabkan panic
-* Salah memetakan alamat shared memory ke USERTOP
-* Proses biasa bisa akses audit log (belum ada validasi PID)
-
----
-
-## 📚 Referensi
-
-Tuliskan sumber referensi yang Anda gunakan, misalnya:
-
-* Buku xv6 MIT: [https://pdos.csail.mit.edu/6.828/2018/xv6/book-rev11.pdf](https://pdos.csail.mit.edu/6.828/2018/xv6/book-rev11.pdf)
-* Repositori xv6-public: [https://github.com/mit-pdos/xv6-public](https://github.com/mit-pdos/xv6-public)
-* Stack Overflow, GitHub Issues, diskusi praktikum
-
----
-
+📚 Referensi 
+MIT xv6 Book (x86): https://pdos.csail.mit.edu/6.828/2018/xv6/book-rev11.pdf 
+Repositori xv6-public: https://github.com/mit-pdos/xv6-public Diskusi praktikum dan dokumentasi internal Stack Overflow dan forum diskusi kernel open source.
