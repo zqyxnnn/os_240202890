@@ -2,96 +2,95 @@
 
 **Mata Kuliah**: Sistem Operasi
 **Semester**: Genap / Tahun Ajaran 2024–2025
-**Nama**: `<Nama Lengkap>`
-**NIM**: `<Nomor Induk Mahasiswa>`
+**Nama**: Zakkya Fauzan Alba'asithu
+**NIM**: 240202890
 **Modul yang Dikerjakan**:
-`(Contoh: Modul 1 – System Call dan Instrumentasi Kernel)`
+`Modul 1 – System Call dan Instrumentasi Kernel`
 
 ---
 
 ## 📌 Deskripsi Singkat Tugas
 
-Tuliskan deskripsi singkat dari modul yang Anda kerjakan. Misalnya:
+* **Modul 1 – System Call dan Instrumentasi Kernel**
+  Pada modul ini, saya diminta menambahkan dua buah system call baru pada kernel `xv6-public`. System call pertama adalah `getpinfo()` yang mengembalikan informasi seluruh proses aktif di sistem (PID, penggunaan memori, dan nama proses). System call kedua adalah `getreadcount()` yang menghitung total pemanggilan fungsi `read()` sejak sistem booting.
 
-* **Modul 1 – System Call dan Instrumentasi Kernel**:
-  Menambahkan dua system call baru, yaitu `getpinfo()` untuk melihat proses yang aktif dan `getReadCount()` untuk menghitung jumlah pemanggilan `read()` sejak boot.
 ---
 
 ## 🛠️ Rincian Implementasi
 
-Tuliskan secara ringkas namun jelas apa yang Anda lakukan:
+### 🔧 Perubahan Struktural:
 
-### Contoh untuk Modul 1:
+* Menambahkan struktur `struct pinfo` ke dalam file `proc.h` untuk menyimpan informasi proses aktif.
+* Menambahkan variabel global `readcount` di file `sysproc.c` sebagai penghitung jumlah pemanggilan `read()`.
 
-* Menambahkan dua system call baru di file `sysproc.c` dan `syscall.c`
-* Mengedit `user.h`, `usys.S`, dan `syscall.h` untuk mendaftarkan syscall
-* Menambahkan struktur `struct pinfo` di `proc.h`
-* Menambahkan counter `readcount` di kernel
-* Membuat dua program uji: `ptest.c` dan `rtest.c`
+### ⚙️ Penambahan System Call:
+
+* Menambahkan nomor system call baru `SYS_getpinfo` dan `SYS_getreadcount` pada `syscall.h`.
+* Menambahkan deklarasi fungsi system call pada `user.h` dan `usys.S`.
+* Mendaftarkan handler system call `sys_getpinfo()` dan `sys_getreadcount()` dalam `syscall.c`.
+* Mengimplementasikan kedua fungsi tersebut dalam `sysproc.c`.
+
+### 📝 Perubahan Fungsi `read`:
+
+* Memodifikasi fungsi `sys_read()` dalam `sysfile.c` dengan menambahkan `readcount++` di bagian awal untuk menghitung setiap pemanggilan fungsi `read`.
+
+### 🧪 Pembuatan Program Uji:
+
+* `ptest.c`: Menguji system call `getpinfo()`.
+* `rtest.c`: Menguji system call `getreadcount()` sebelum dan sesudah pemanggilan `read()`.
+
+### 🛠️ Build System:
+
+* Menambahkan file `_ptest` dan `_rtest` ke dalam daftar `UPROGS` di `Makefile`.
+
 ---
 
 ## ✅ Uji Fungsionalitas
 
-Tuliskan program uji apa saja yang Anda gunakan, misalnya:
+Program uji yang digunakan:
 
-* `ptest`: untuk menguji `getpinfo()`
-* `rtest`: untuk menguji `getReadCount()`
-* `cowtest`: untuk menguji fork dengan Copy-on-Write
-* `shmtest`: untuk menguji `shmget()` dan `shmrelease()`
-* `chmodtest`: untuk memastikan file `read-only` tidak bisa ditulis
-* `audit`: untuk melihat isi log system call (jika dijalankan oleh PID 1)
+* `ptest`: Menampilkan daftar proses aktif beserta PID, ukuran memori, dan nama proses.
+* `rtest`: Menampilkan jumlah pemanggilan `read()` sebelum dan sesudah fungsi `read()` dipanggil.
 
 ---
 
 ## 📷 Hasil Uji
 
-Lampirkan hasil uji berupa screenshot atau output terminal. Contoh:
-
-### 📍 Contoh Output `cowtest`:
+### 📍 Contoh Output `ptest`
 
 ```
-Child sees: Y
-Parent sees: X
+$ ptest
+PID	MEM	NAME
+1	4096	init
+2	2048	sh
+3	2048	ptest
 ```
 
-### 📍 Contoh Output `shmtest`:
+### 📍 Contoh Output `rtest`
 
 ```
-Child reads: A
-Parent reads: B
+$ rtest
+Read Count Sebelum: 4
+hello
+Read Count Setelah: 5
 ```
 
-### 📍 Contoh Output `chmodtest`:
-
-```
-Write blocked as expected
-```
-
-Jika ada screenshot:
-
-```
-![hasil cowtest](./screenshots/cowtest_output.png)
-```
+> Output menunjukkan bahwa `readcount` berhasil bertambah setelah `read()` dipanggil dari user program.
 
 ---
 
 ## ⚠️ Kendala yang Dihadapi
 
-Tuliskan kendala (jika ada), misalnya:
-
-* Salah implementasi `page fault` menyebabkan panic
-* Salah memetakan alamat shared memory ke USERTOP
-* Proses biasa bisa akses audit log (belum ada validasi PID)
+* Saat pertama kali mengakses `ptable->proc`, kernel mengalami crash karena pointer belum dikonversi dengan benar melalui `argptr()`. Solusi: memperbaiki casting pointer dan memastikan pointer diarahkan dengan benar.
+* Struktur `ptable_lock` tidak tersedia pada `xv6-public`, sehingga saya menggunakan `ptable.lock` bawaan dan memastikan semua akses ke tabel proses diamankan menggunakan `acquire()` dan `release()`.
 
 ---
 
 ## 📚 Referensi
 
-Tuliskan sumber referensi yang Anda gunakan, misalnya:
-
 * Buku xv6 MIT: [https://pdos.csail.mit.edu/6.828/2018/xv6/book-rev11.pdf](https://pdos.csail.mit.edu/6.828/2018/xv6/book-rev11.pdf)
 * Repositori xv6-public: [https://github.com/mit-pdos/xv6-public](https://github.com/mit-pdos/xv6-public)
-* Stack Overflow, GitHub Issues, diskusi praktikum
+* Diskusi dan dokumentasi praktikum
+* Stack Overflow dan GitHub Issues terkait pengembangan xv6
 
 ---
-
